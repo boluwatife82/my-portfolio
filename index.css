@@ -948,3 +948,18 @@ nav.scrolled { background:rgba(5,8,16,0.85); border-color:var(--border); backdro
   .form-note { max-width:100%; }
   .form-submit-row { gap:0.75rem; }
 }
+
+.proof-text{
+  font-size:0.8rem;
+  color:var(--text-muted);
+  text-align: center;
+  margin-top: 15px;
+padding-top: 20px;
+
+.nigeria{
+  font-size:0.8rem;
+  color:var(--accent5);
+  text-align: center;
+  margin-top: 15px;}
+}
+
