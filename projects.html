@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tife — All Projects</title>
+<meta name="description" content="All projects by Tife — Full-Stack Developer. Websites, platforms, and rebuilds built from scratch.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #050810;
+    --bg2: #080c14;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --accent4: #10b981;
+    --accent5: #f59e0b;
+    --text: #f0f4ff;
+    --text-muted: #7a85a3;
+    --text-dim: #3d4a6b;
+    --border: rgba(59,130,246,0.12);
+    --card-bg: rgba(8,12,20,0.9);
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono','Fira Code',monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+
+  /* ── GRID BG ── */
+  .page-grid-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.025) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 3rem;
+    background: rgba(5,8,16,0.85);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+  }
+  .nav-logo {
+    font-family: var(--mono); font-size: 0.85rem; color: var(--accent);
+    letter-spacing: 0.05em; text-decoration: none;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
+  .nav-back {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.8rem; color: var(--text-muted); text-decoration: none;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    font-family: var(--mono);
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+
+  /* ── PAGE WRAPPER ── */
+  .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 8rem 2rem 6rem; }
+
+  /* ── HEADER ── */
+  .page-label {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    font-family: var(--mono); font-size: 0.7rem; color: var(--accent2);
+    letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 1.2rem;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .page-label::before { content:''; display:block; width:28px; height:1px; background:var(--accent2); }
+  .page-label.visible { opacity:1; transform:translateY(0); }
+
+  .page-heading {
+    font-size: clamp(2rem,4vw,3.4rem); font-weight:700;
+    line-height:1.1; letter-spacing:-0.03em; margin-bottom:1rem;
+    opacity:0; transform:translateY(20px);
+    transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+  }
+  .page-heading.visible { opacity:1; transform:translateY(0); }
+  .page-heading .grad {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .page-sub {
+    font-size:1rem; color:var(--text-muted); max-width:520px;
+    line-height:1.7; margin-bottom:3rem;
+    opacity:0; transform:translateY(20px);
+    transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+  }
+  .page-sub.visible { opacity:1; transform:translateY(0); }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    flex-wrap: wrap; margin-bottom: 3rem;
+    opacity:0; transform:translateY(16px);
+    transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+  }
+  .filter-bar.visible { opacity:1; transform:translateY(0); }
+
+  .filter-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: var(--mono); font-size: 0.7rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.5rem 1rem; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: rgba(59,130,246,0.3); color: var(--text); }
+  .filter-btn.active {
+    background: var(--accent); color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+  }
+  .filter-btn .count {
+    font-size: 0.6rem; opacity: 0.7;
+    background: rgba(255,255,255,0.15);
+    padding: 0.1rem 0.4rem; border-radius: 10px;
+  }
+  .filter-btn.active .count { background: rgba(255,255,255,0.2); }
+
+  /* ── PROJECTS GRID ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  /* ── PROJECT CARD ── */
+  .proj-card {
+    border: 1px solid var(--border); border-radius: 16px;
+    background: var(--card-bg); overflow: hidden;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s;
+  }
+  .proj-card.visible { opacity:1; transform:translateY(0); }
+  .proj-card:hover { border-color: rgba(59,130,246,0.3); }
+
+  /* hide/show for filter */
+  .proj-card.hidden {
+    display: none;
+  }
+
+  /* ── MOCKUP / VIDEO AREA ── */
+  .proj-mockup {
+    position: relative; overflow: hidden;
+    aspect-ratio: 16/10; cursor: pointer;
+    background: var(--bg2);
+  }
+  .proj-thumb {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top;
+    transition: opacity 0.4s ease;
+    display: block;
+  }
+  .proj-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top;
+    opacity: 0; transition: opacity 0.4s ease;
+  }
+  .proj-hint {
+    position: absolute; bottom: 10px; left: 10px;
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.25rem 0.65rem; border-radius: 4px;
+    font-family: var(--mono); font-size: 0.6rem;
+    color: rgba(255,255,255,0.6); letter-spacing: 0.08em;
+    pointer-events: none; transition: opacity 0.3s;
+  }
+
+  /* category badge on image */
+  .proj-cat-badge {
+    position: absolute; top: 10px; left: 10px;
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.25rem 0.65rem; border-radius: 4px;
+    border: 1px solid; pointer-events: none; z-index: 2;
+    backdrop-filter: blur(8px);
+  }
+  .badge-website  { color:var(--accent2); background:rgba(6,182,212,0.15);  border-color:rgba(6,182,212,0.3); }
+  .badge-platform { color:var(--accent);  background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.3); }
+  .badge-rebuild  { color:var(--accent4); background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); }
+  .badge-brand    { color:var(--accent5); background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.3); }
+
+  /* ── CARD BOTTOM ── */
+  .proj-card-bottom { padding: 1.5rem; }
+
+  .proj-card-tag {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .proj-card-title {
+    font-size: 1.2rem; font-weight: 700; color: var(--text);
+    letter-spacing: -0.02em; margin-bottom: 0.5rem;
+  }
+  .proj-card-desc {
+    font-size: 0.83rem; color: var(--text-muted); line-height: 1.65;
+    margin-bottom: 1.1rem;
+  }
+  .proj-card-desc strong { color: var(--text); font-weight: 500; }
+
+  /* feature list */
+  .feat-list { display:flex; flex-direction:column; gap:0.35rem; margin-bottom:1.1rem; }
+  .feat-item { display:flex; align-items:center; gap:0.55rem; font-size:0.78rem; color:var(--text-muted); }
+  .feat-check {
+    width:15px; height:15px; border-radius:3px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:8px;
+  }
+  .check-blue   { background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25); color:var(--accent); }
+  .check-cyan   { background:rgba(6,182,212,0.12);  border:1px solid rgba(6,182,212,0.25);  color:var(--accent2); }
+  .check-green  { background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); color:var(--accent4); }
+  .check-amber  { background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); color:var(--accent5); }
+
+  /* pills */
+  .proj-pills { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:1.25rem; }
+  .proj-pill {
+    font-family:var(--mono); font-size:0.6rem; color:var(--text-dim);
+    border:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.03);
+    padding:0.2rem 0.55rem; border-radius:3px; letter-spacing:0.06em;
+  }
+
+  /* view live btn */
+  .proj-live-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
+    color: var(--accent); text-decoration: none;
+    border: 1px solid rgba(59,130,246,0.2);
+    padding: 0.45rem 1rem; border-radius: 5px;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+  }
+  .proj-live-btn:hover {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.08);
+  }
+  .proj-live-btn.coming {
+    color: var(--text-dim); border-color: rgba(255,255,255,0.07);
+    pointer-events: none;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: none; grid-column: 1/-1;
+    text-align: center; padding: 5rem 2rem;
+  }
+  .empty-state.visible { display: block; }
+  .empty-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+  .empty-text { font-size: 0.9rem; color: var(--text-muted); }
+
+  /* ── MORE COMING ── */
+  .more-coming {
+    grid-column: 1/-1; text-align: center;
+    padding: 2.5rem; border: 1px dashed rgba(59,130,246,0.15);
+    border-radius: 16px; margin-top: 0.5rem;
+    opacity:0; transform:translateY(16px);
+    transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
+  }
+  .more-coming.visible { opacity:1; transform:translateY(0); }
+  .more-coming-icon { font-size:1.5rem; margin-bottom:0.75rem; display:block; }
+  .more-coming-title { font-size:0.9rem; font-weight:600; color:var(--text); margin-bottom:0.4rem; }
+  .more-coming-desc { font-size:0.8rem; color:var(--text-muted); line-height:1.6; }
+
+  /* ── FOOTER ── */
+  .proj-page-footer {
+    margin-top: 5rem; padding: 2rem 0;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
+  }
+  .footer-back-link {
+    color: var(--accent); text-decoration: none;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: gap 0.2s;
+  }
+  .footer-back-link:hover { gap: 0.7rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    nav { padding: 1rem 1.25rem; }
+    .page { padding: 6rem 1.25rem 4rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Tife</a>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-label" data-reveal>All Projects</div>
+  <h1 class="page-heading" data-reveal>
+    Everything I've <span class="grad">Built</span>
+  </h1>
+  <p class="page-sub" data-reveal>
+    Every project here was built from scratch — no templates, no shortcuts. This list grows as I build. Check back.
+  </p>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" data-reveal>
+    <button class="filter-btn active" data-filter="all">
+      All <span class="count" id="count-all">3</span>
+    </button>
+    <button class="filter-btn" data-filter="website">
+      Websites <span class="count" id="count-website">2</span>
+    </button>
+    <button class="filter-btn" data-filter="platform">
+      Platforms <span class="count" id="count-platform">1</span>
+    </button>
+    <button class="filter-btn" data-filter="rebuild">
+      Rebuilds <span class="count" id="count-rebuild">1</span>
+    </button>
+  </div>
+
+  <!-- PROJECTS GRID -->
+  <div class="projects-grid" id="projectsGrid">
+
+    <!-- ═══════════════════════════════
+         PROJECT 1 — ST NICHOLAS HOSPITAL
+         categories: website, rebuild
+    ═══════════════════════════════ -->
+    <div class="proj-card" data-reveal data-delay="0" data-categories="website rebuild">
+      <div class="proj-mockup">
+        <span class="proj-cat-badge badge-rebuild">Rebuild</span>
+        <img
+          src="hospital-after.jpg"
+          alt="St. Nicholas Hospital"
+          class="proj-thumb">
+        <video
+          src="hospital-after-demo.mp4"
+          muted loop playsinline preload="none"
+          class="proj-video">
+        </video>
+        <div class="proj-hint">▶ hover to preview</div>
+      </div>
+      <div class="proj-card-bottom">
+        <div class="proj-card-tag" style="color:var(--accent2)">Healthcare · Rebuild</div>
+        <div class="proj-card-title">St. Nicholas Hospital</div>
+        <p class="proj-card-desc">
+          Complete digital rebuild of a hospital site that was <strong>costing them patients</strong>. Went from broken, non-mobile, embarrassing — to clean, fast, and professional.
+        </p>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-check check-cyan">✓</div>Full mobile-first redesign</div>
+          <div class="feat-item"><div class="feat-check check-cyan">✓</div>Clear department navigation</div>
+          <div class="feat-item"><div class="feat-check check-cyan">✓</div>Fast load, clean structure</div>
+          <div class="feat-item"><div class="feat-check check-cyan">✓</div>Built from scratch — zero templates</div>
+        </div>
+        <div class="proj-pills">
+          <span class="proj-pill">HTML5</span>
+          <span class="proj-pill">CSS3</span>
+          <span class="proj-pill">JavaScript</span>
+          <span class="proj-pill">Responsive</span>
+        </div>
+        <a href="https://st-nicholas-eta.vercel.app" target="_blank" class="proj-live-btn">
+          View Live Site →
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         PROJECT 2 — FIXAM
+         categories: platform
+    ═══════════════════════════════ -->
+    <div class="proj-card" data-reveal data-delay="1" data-categories="platform">
+      <div class="proj-mockup">
+        <span class="proj-cat-badge badge-platform">Platform</span>
+        <img
+          src="fixam-screenshot.png"
+          alt="FixAm Platform"
+          class="proj-thumb">
+        <video
+          src="fixam-demo.mp4"
+          muted loop playsinline preload="none"
+          class="proj-video">
+        </video>
+        <div class="proj-hint">▶ hover to preview</div>
+      </div>
+      <div class="proj-card-bottom">
+        <div class="proj-card-tag" style="color:var(--accent)">Platform · Marketplace</div>
+        <div class="proj-card-title">FixAm</div>
+        <p class="proj-card-desc">
+          A <strong>live service platform</strong> connecting users to verified local service providers. Full product — listings, search, auth, provider profiles, user flows.
+        </p>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-check check-blue">✓</div>Provider listing & discovery</div>
+          <div class="feat-item"><div class="feat-check check-blue">✓</div>Search, filter & categories</div>
+          <div class="feat-item"><div class="feat-check check-blue">✓</div>Dual role auth system</div>
+          <div class="feat-item"><div class="feat-check check-blue">✓</div>Fully responsive</div>
+        </div>
+        <div class="proj-pills">
+          <span class="proj-pill">HTML/CSS/JS</span>
+          <span class="proj-pill">Node.js</span>
+          <span class="proj-pill">REST API</span>
+          <span class="proj-pill">Database</span>
+        </div>
+        <a href="#" target="_blank" class="proj-live-btn">
+          View Live Site →
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         PROJECT 3 — RESTAURANT
+         categories: website, brand
+    ═══════════════════════════════ -->
+    <div class="proj-card" data-reveal data-delay="2" data-categories="website">
+      <div class="proj-mockup">
+        <span class="proj-cat-badge badge-website">Website</span>
+        <img
+          src="restaurant-screenshot.png"
+          alt="Restaurant Platform"
+          class="proj-thumb">
+        <video
+          src="restaurant-demo.mp4"
+          muted loop playsinline preload="none"
+          class="proj-video">
+        </video>
+        <div class="proj-hint">▶ hover to preview</div>
+      </div>
+      <div class="proj-card-bottom">
+        <div class="proj-card-tag" style="color:var(--accent5)">F&B · Full Brand Build</div>
+        <div class="proj-card-title">Restaurant Platform</div>
+        <p class="proj-card-desc">
+          Complete digital identity for a food business — menu display, <strong>table reservation system</strong>, food ordering, and full brand visual language.
+        </p>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-check check-amber">✓</div>Full menu display</div>
+          <div class="feat-item"><div class="feat-check check-amber">✓</div>Table reservation flow</div>
+          <div class="feat-item"><div class="feat-check check-amber">✓</div>Food ordering system</div>
+          <div class="feat-item"><div class="feat-check check-amber">✓</div>Brand identity + visuals</div>
+        </div>
+        <div class="proj-pills">
+          <span class="proj-pill">HTML/CSS/JS</span>
+          <span class="proj-pill">UX Design</span>
+          <span class="proj-pill">Brand System</span>
+          <span class="proj-pill">Booking Logic</span>
+        </div>
+        <a href="#" class="proj-live-btn coming">
+          Coming Soon
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         ADD NEW PROJECTS BELOW HERE
+         Copy a proj-card block above,
+         change the content + data-categories
+         Categories: website / platform / rebuild
+    ═══════════════════════════════ -->
+
+    <!-- empty state -->
+    <div class="empty-state" id="emptyState">
+      <span class="empty-icon">🔍</span>
+      <div class="empty-text">No projects in this category yet — check back soon.</div>
+    </div>
+
+    <!-- more coming -->
+    <div class="more-coming" data-reveal>
+      <span class="more-coming-icon">🚧</span>
+      <div class="more-coming-title">More projects on the way</div>
+      <div class="more-coming-desc">
+        Currently building. Every new project gets added here as it ships.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="proj-page-footer">
+    <a href="index.html" class="footer-back-link">← Back to Portfolio</a>
+    <span>© 2025 Tife</span>
+  </div>
+
+</div>
+
+<script>
+  /* ── SCROLL REVEAL ── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const delay = parseInt(e.target.getAttribute('data-delay') || '0') * 130;
+      setTimeout(() => e.target.classList.add('visible'), delay + 80);
+      obs.unobserve(e.target);
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('[data-reveal]').forEach(el => obs.observe(el));
+
+  /* ── VIDEO HOVER ── */
+  document.querySelectorAll('.proj-mockup').forEach(mockup => {
+    const video = mockup.querySelector('.proj-video');
+    const thumb = mockup.querySelector('.proj-thumb');
+    const hint  = mockup.querySelector('.proj-hint');
+    if (!video) return;
+
+    mockup.addEventListener('mouseenter', () => {
+      video.play();
+      video.style.opacity = '1';
+      thumb.style.opacity = '0';
+      if (hint) hint.style.opacity = '0';
+    });
+    mockup.addEventListener('mouseleave', () => {
+      video.pause();
+      video.currentTime   = 0;
+      video.style.opacity = '0';
+      thumb.style.opacity = '1';
+      if (hint) hint.style.opacity = '1';
+    });
+  });
+
+  /* ── FILTER SYSTEM ── */
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards      = document.querySelectorAll('.proj-card[data-categories]');
+  const emptyState = document.getElementById('emptyState');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter');
+
+      /* update active button */
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      /* show/hide cards */
+      let visible = 0;
+      cards.forEach(card => {
+        const cats = card.getAttribute('data-categories') || '';
+        const show = filter === 'all' || cats.includes(filter);
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+
+      /* show empty state if nothing matches */
+      emptyState.classList.toggle('visible', visible === 0);
+    });
+  });
+
+  /* update counts dynamically */
+  function updateCounts() {
+    const categories = ['website', 'platform', 'rebuild'];
+    document.getElementById('count-all').textContent = cards.length;
+    categories.forEach(cat => {
+      const el = document.getElementById(`count-${cat}`);
+      if (!el) return;
+      let count = 0;
+      cards.forEach(card => {
+        if ((card.getAttribute('data-categories') || '').includes(cat)) count++;
+      });
+      el.textContent = count;
+    });
+  }
+  updateCounts();
+</script>
+</body>
+</html>
